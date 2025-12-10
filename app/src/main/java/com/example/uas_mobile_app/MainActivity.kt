@@ -3,45 +3,31 @@ package com.example.uas_mobile_app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import com.example.uas_mobile_app.ui.theme.EventScreen
+import com.example.uas_mobile_app.ui.theme.UASMobileAppTheme
+import com.example.uas_mobile_app.viewmodel.EventViewModel
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.uas_mobile_app.ui.theme.UASMobileAppTheme
 
 class MainActivity : ComponentActivity() {
+    private val viewModel: EventViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             UASMobileAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Surface(modifier = androidx.compose.ui.Modifier.fillMaxSize()) {
+                    EventScreen(viewModel)
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    UASMobileAppTheme {
-        Greeting("Android")
     }
 }
