@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun StatCard(label: String, value: String, color: Color = MaterialTheme.colorScheme.primary) {
+fun StatCard(label: String, value: String, color: Color = MaterialTheme.colorScheme.primary, weight: Modifier) {
     Card(
         modifier = Modifier.width(100.dp).height(80.dp).padding(6.dp),
         shape = RoundedCornerShape(16.dp),

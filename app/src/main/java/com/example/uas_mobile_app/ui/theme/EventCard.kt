@@ -10,18 +10,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.uas_mobile_app.model.Event
+import androidx.compose.foundation.lazy.LazyColumn
+
 
 @Composable
 fun EventCard(
-    event: Event,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
+    event: Event, onEdit: () -> Unit, onDelete: () -> Unit
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        colors = CardDefaults.cardColors(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), colors = CardDefaults.cardColors(
             containerColor = when (event.status) {
                 "upcoming" -> MaterialTheme.colorScheme.primaryContainer
                 "ongoing" -> MaterialTheme.colorScheme.tertiaryContainer
@@ -34,21 +31,48 @@ fun EventCard(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+//          Detail Event
             Column(modifier = Modifier.weight(1f)) {
+
                 Text(event.title, style = MaterialTheme.typography.titleMedium)
-                Text("${event.date} | ${event.time}", style = MaterialTheme.typography.bodyMedium)
-                Text(event.location, style = MaterialTheme.typography.bodySmall)
-                Text("Status: ${event.status}", style = MaterialTheme.typography.labelSmall)
-            }
-            Row {
-                IconButton(onClick = onEdit) {
-                    Icon(Icons.Default.Edit, contentDescription = "Edit", tint = MaterialTheme.colorScheme.primary)
+
+                Text("Tanggal: ${event.date} | ${event.time}", style = MaterialTheme.typography.titleSmall)
+
+                Text("Lokasi: ${event.location}", style = MaterialTheme.typography.bodySmall)
+
+                Text("Deskripsi: ${event.description ?: "-"}", style = MaterialTheme.typography.bodySmall)
+
+                Text("Kapasitas: ${event.capacity ?: "-"}", style = MaterialTheme.typography.bodySmall)
+
+                event.id?.let {
+                    Text("ID: $it", style = MaterialTheme.typography.bodySmall)
                 }
+
+                Text("Status: ${event.status}", style = MaterialTheme.typography.labelSmall)
+
+            }
+
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
+//                horizontalAlignment = Alignment.End,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                // Edit di pojok kanan atas
+                IconButton(onClick = onEdit) {
+                    Icon(
+                        Icons.Default.Edit, contentDescription = "Edit", tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Delete di pojok kanan bawah
                 IconButton(onClick = onDelete) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
+                    Icon(
+                        Icons.Default.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.example.uas_mobile_app.ui.theme
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -50,7 +51,7 @@ fun EventScreen(viewModel: EventViewModel) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Event Management") }
+                title = { Text("Event Management", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary) }
             )
         },
         floatingActionButton = {
@@ -61,7 +62,8 @@ fun EventScreen(viewModel: EventViewModel) {
                 Icon(Icons.Default.Add, contentDescription = "Tambah Event")
             }
         }
-    ) { innerPadding ->
+    )
+    { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -69,19 +71,37 @@ fun EventScreen(viewModel: EventViewModel) {
                 .fillMaxSize()
         ) {
 
-            stats?.let {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+            stats?.let { s ->
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
+                        .padding(bottom = 16.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
+                    elevation = CardDefaults.cardElevation(3.dp)
                 ) {
-                    StatCard("Total", it.total.toString(), MaterialTheme.colorScheme.primary)
-                    StatCard("Upcoming", it.upcoming.toString(), MaterialTheme.colorScheme.tertiary)
-                    StatCard("Ongoing", it.ongoing.toString(), MaterialTheme.colorScheme.secondary)
-                    StatCard("Selesai", it.completed.toString(), MaterialTheme.colorScheme.error)
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            SimpleStat("Total", s.total)
+                            SimpleStat("Upcoming", s.upcoming)
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            SimpleStat("Ongoing", s.ongoing)
+                            SimpleStat("Complete", s.completed)
+                        }
+                    }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
             }
 
             success?.let { Text(it, color = MaterialTheme.colorScheme.primary) }
@@ -89,13 +109,29 @@ fun EventScreen(viewModel: EventViewModel) {
             Spacer(modifier = Modifier.height(8.dp))
 
 
-            // ========== LIST + PULL REFRESH MATERIAL 1 ==========
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pullRefresh(pullRefreshState)
-            ) {
+            // LIST + PULL REFRESH MATERIAL 1
+            Box(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pullRefresh(pullRefreshState),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    items(events.size) { index ->
+                        val event = events[index]
+                        EventCard(
+                            event = event,
+                            onEdit = { showEditDialog = event },
+                            onDelete = { showDeleteDialog = event }
+                        )
+                    }
 
+                    // FAB nggak nutupin card terakhir
+                    item { Spacer(modifier = Modifier.height(90.dp)) }
+                }
+
+                // Loading pertama kali (kalau kosong)
                 if (isLoading && events.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -103,19 +139,9 @@ fun EventScreen(viewModel: EventViewModel) {
                     ) {
                         CircularProgressIndicator()
                     }
-                } else {
-                    LazyColumn {
-                        items(events.size) { index ->
-                            val event = events[index]
-                            EventCard(
-                                event = event,
-                                onEdit = { showEditDialog = event },
-                                onDelete = { showDeleteDialog = event }
-                            )
-                        }
-                    }
                 }
 
+                // Indikator pull-to-refresh
                 PullRefreshIndicator(
                     refreshing = isLoading,
                     state = pullRefreshState,
@@ -166,6 +192,23 @@ fun EventScreen(viewModel: EventViewModel) {
                     Text("Batal")
                 }
             }
+        )
+    }
+}
+@Composable
+fun SimpleStat(label: String, value: Int) {
+    Column(
+        modifier = Modifier.width(140.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = value.toString(),
+            style = MaterialTheme.typography.headlineSmall
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }
