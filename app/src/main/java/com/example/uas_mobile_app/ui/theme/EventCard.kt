@@ -18,12 +18,15 @@ fun EventCard(
     event: Event, onEdit: () -> Unit, onDelete: () -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), colors = CardDefaults.cardColors(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        colors = CardDefaults.cardColors(
             containerColor = when (event.status) {
-                "upcoming" -> MaterialTheme.colorScheme.primaryContainer
-                "ongoing" -> MaterialTheme.colorScheme.tertiaryContainer
-                "completed" -> MaterialTheme.colorScheme.secondaryContainer
-                else -> MaterialTheme.colorScheme.errorContainer
+                "upcoming" -> UpcomingColor
+                "ongoing" -> OngoingColor
+                "completed" -> CompletedColor
+                else -> CancelledColor
             }
         )
     ) {
