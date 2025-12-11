@@ -20,7 +20,7 @@ class EventViewModel : ViewModel() {
     private val _error = mutableStateOf<String?>(null)
     val error: State<String?> = _error
 
-    // TAMBAHKAN INI!
+    // Tambahan
     private val _success = mutableStateOf<String?>(null)
     val success: State<String?> = _success
 
